@@ -4,7 +4,8 @@
   "description": "A package aimed at procedural generation of fiction for Node.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --max-warnings 0"
   },
   "repository": {
     "type": "git",
@@ -21,13 +22,16 @@
   },
   "homepage": "https://github.com/tsdubose/torgojs#readme",
   "dependencies": {
-    "bluebird": "^3.5.0",
+    "bluebird": "^3.5.1",
     "epub": "^0.2.0",
     "node-wordnet": "^0.1.12",
     "rita": "^1.2.12",
-    "sentiment": "^4.0.1",
+    "sentiment": "^4.1.0",
     "tracery-grammar": "^2.7.3",
     "wndb-with-exceptions": "^3.0.2",
     "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1"
   }
 }
