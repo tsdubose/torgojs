@@ -33,11 +33,11 @@ module.exports = function (chapters) {
 		chapterData.length.total = 0;
 		try {
 			chapters.forEach(function (chapter) {
+				//This is used to calculate the various lengths of chapters for the system to later produce chapters of varying realistic lengths.
 				chapterData.length.total += chapter.length;
 				if (Object.keys(chapterData.length).includes(chapter.length.toString())) {
 					chapterData.length[chapter.length] += 1;
 				}
-
 				else {
 					chapterData.length[chapter.length] = 1;
 				}
@@ -46,17 +46,19 @@ module.exports = function (chapters) {
 					let current = narrOrDia(paragraph);
 					let next = narrOrDia(a[index + 1]);
 
-					if (index == 0) {
-						chapterData.structure[current].starts += 1;
-						chapterData.structure[current].total += 1;
-						if (next) {
-							chapterData.structure[current].following[next] += 1;
+					if (current) {
+						if (index == 0) {
+							chapterData.structure[current].starts += 1;
+							chapterData.structure[current].total += 1;
+							if (next) {
+								chapterData.structure[current].following[next] += 1;
+							}
 						}
-					}
-					else {
-						chapterData.structure[current].total += 1;
-						if (next) {
-							chapterData.structure[current].following[next] += 1;
+						else {
+							chapterData.structure[current].total += 1;
+							if (next) {
+								chapterData.structure[current].following[next] += 1;
+							}
 						}
 					}
 				});
@@ -74,6 +76,6 @@ function narrOrDia(paragraph) {
 		return paragraph[0] === "“" ? "dialogue" : "narration";
 	}
 	else {
-		return;
+		return null;
 	}
 }
