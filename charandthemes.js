@@ -3,7 +3,7 @@ const wordnet = require('node-wordnet');
 
 const myNet = new wordnet();
 /*Given a string, this module returns an array of the three primary characters of a work (defined by numbers of mentions) and the primary themes—a net of nouns that are commonly mentioned and related to one another via a wordnet lookup.
-The returned object takes the following form:
+The returned array takes the following form:
 [
 ["char1", "char2", "char3"],
 [any number of strings as found by wordnet],
@@ -19,6 +19,7 @@ This whole thing returns a Promise.
 // TODO: similar to the promise.settle issue above, need to give this the ability to keep going if things aren't found.
 // TODO: Need to solve the 'I' problem
 // IDEA: There's really no reason to limit this to three characters. Could even bring in key places.
+
 //Function called by the exported function in order to actually find the main characters. Expects the sorted concordance array as input and returns a promise containing an array of the three names.
 //IDEA: TF-IDF probably changes a lot of this, god damn it.
 function characterFinder(sortedArray) {

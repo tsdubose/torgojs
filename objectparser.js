@@ -23,7 +23,7 @@ module.exports = function (text) {
 			.map(function (chapter) {
 				return chapter.split(/\n\s*\n/);
 			});
-
+// TODO: Check this, I'm not sure it's working correctly.
 		let cleanedText = smartenedText.replace(/\\n/g, /\[ ]/);
 
 		chapters.push(cleanedText);
