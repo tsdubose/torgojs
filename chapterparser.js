@@ -1,14 +1,12 @@
 // const flatten = require('flatten.js');
-//Expects the whole data structure, minus the shaved off raw text, as an input.
+//Expects the whole text data array, minus the shaved off raw text, as an input.
 //Returns a promise with an object of the form detailed below. This will need to be cleaned up.
-//TODO: If not here then elsewhere: I need to do some type checking and throw errors.
+//TODO: I need to do some type checking and throw errors, look for reasons to reject.
 //TODO: I don't think I'm gathering the right totals here, but it doesn't matter yet.
+const arrayCounter = require('./arraycounter.js');
 module.exports = function (chapters) {
 	//Inititalize the data structure, so that you don't have to test for it later.
 	let chapterData = {
-		length: {
-			total: 0
-		},
 		structure : {
 			dialogue: {
 					starts: 0,
@@ -30,18 +28,8 @@ module.exports = function (chapters) {
 	};
 
 	return new Promise(function(resolve, reject) {
-		chapterData.length.total = 0;
-		try {
+			chapterData.chLength = arrayCounter(chapters);
 			chapters.forEach(function (chapter) {
-				//This is used to calculate the various lengths of chapters for the system to later produce chapters of varying realistic lengths.
-				chapterData.length.total += chapter.length;
-				if (Object.keys(chapterData.length).includes(chapter.length.toString())) {
-					chapterData.length[chapter.length] += 1;
-				}
-				else {
-					chapterData.length[chapter.length] = 1;
-				}
-
 				chapter.forEach(function (paragraph, index, a) {
 					let current = narrOrDia(paragraph);
 					let next = narrOrDia(a[index + 1]);
@@ -64,12 +52,9 @@ module.exports = function (chapters) {
 				});
 			});
 			resolve(chapterData);
-		} catch (e) {
-			reject(e);
-		}
 	});
 
-}
+};
 
 function narrOrDia(paragraph) {
 	if (paragraph && typeof paragraph === "string") {
