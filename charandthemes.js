@@ -2,14 +2,21 @@ const rita = require('rita');
 const wordnet = require('node-wordnet');
 
 const myNet = new wordnet();
-/*Given a string, this module returns an array of the three primary characters of a work (defined by numbers of mentions) and the primary themes—a net of nouns that are commonly mentioned and related to one another via a wordnet lookup.
-The returned array takes the following form:
-[
+/*Given a string, this module returns an object of the three primary characters of a work (defined by numbers of mentions) and the primary themes—a net of nouns that are commonly mentioned and related to one another via a wordnet lookup.
+The returned object takes the following form:
+{
+char1: first char,
+char2: second char,
+char3: third char,
+theme1: [array of themes],
+theme2: [array of themes],
+theme3: [array of themes]
+}
 ["char1", "char2", "char3"],
 [any number of strings as found by wordnet],
 [any number of strings as found by wordnet],
 [any number of strings as found by wordnet]
-]
+
 
 This whole thing returns a Promise.
 */
@@ -137,11 +144,14 @@ module.exports = function (corpus) {
 		let themeAndChar = [characterFinder(concordArray), themeFinder(concordArray)];
 		Promise.all(themeAndChar)
 			.then((resolvedThemeAndChar) => {
-				let themeAndCharToReturn = [];
-				themeAndCharToReturn.push(resolvedThemeAndChar[0]);
-				themeAndCharToReturn.push(resolvedThemeAndChar[1][0]);
-				themeAndCharToReturn.push(resolvedThemeAndChar[1][1]);
-				themeAndCharToReturn.push(resolvedThemeAndChar[1][2]);
+				// Switching this from an array to an object. There's more work to be done here to make this less hard-wired.
+				let themeAndCharToReturn = {};
+				themeAndCharToReturn.char1 = resolvedThemeAndChar[0][0];
+				themeAndCharToReturn.char2 = resolvedThemeAndChar[0][1];
+				themeAndCharToReturn.char3 = resolvedThemeAndChar[0][2];
+				themeAndCharToReturn.theme1 = resolvedThemeAndChar[1][0];
+				themeAndCharToReturn.theme2 = resolvedThemeAndChar[1][1];
+				themeAndCharToReturn.theme3 = resolvedThemeAndChar[1][2];
 				resolve(themeAndCharToReturn);
 			}
 			)
