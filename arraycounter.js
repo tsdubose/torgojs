@@ -7,7 +7,6 @@ totalItems: 95,
 }
 */
 module.exports = function (arrays) {
-	console.log(arrays.length);
 	let countingData = {};
 	arrays.forEach(function (item) {
 		if (Object.keys(countingData).includes(item.length.toString())) {
@@ -17,10 +16,5 @@ module.exports = function (arrays) {
 			countingData[item.length] = 1;
 		}
 	});
-	for (var key in countingData) {
-		if (countingData.hasOwnProperty(key)) {
-			countingData[key] = Math.round((countingData[key] / arrays.length) * 1000)  / 1000;
-		}
-	}
 	return countingData;
 };
