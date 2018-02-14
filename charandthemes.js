@@ -145,10 +145,11 @@ module.exports = function (corpus) {
 		Promise.all(themeAndChar)
 			.then((resolvedThemeAndChar) => {
 				// Switching this from an array to an object. There's more work to be done here to make this less hard-wired.
+				//Wrapping the chars in arrays right now, but that's going to be more systematic later.
 				let themeAndCharToReturn = {};
-				themeAndCharToReturn.char1 = resolvedThemeAndChar[0][0];
-				themeAndCharToReturn.char2 = resolvedThemeAndChar[0][1];
-				themeAndCharToReturn.char3 = resolvedThemeAndChar[0][2];
+				themeAndCharToReturn.char1 = [resolvedThemeAndChar[0][0]];
+				themeAndCharToReturn.char2 = [resolvedThemeAndChar[0][1]];
+				themeAndCharToReturn.char3 = [resolvedThemeAndChar[0][2]];
 				themeAndCharToReturn.theme1 = resolvedThemeAndChar[1][0];
 				themeAndCharToReturn.theme2 = resolvedThemeAndChar[1][1];
 				themeAndCharToReturn.theme3 = resolvedThemeAndChar[1][2];
