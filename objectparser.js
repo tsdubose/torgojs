@@ -43,5 +43,5 @@ function smarten(a) {
 	a = a.replace(/"/g, "”");                           // closing doubles
 	a = a.replace(/--/g, "—");                // em-dashes
 	a = a.replace(/_(?=\w)|(?=\w)_/g, "");                     //Underscores Gutengberg puts in.
-	return a
+	return a;
 }
