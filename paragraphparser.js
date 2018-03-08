@@ -30,7 +30,10 @@ module.exports = function (paragraphs) {
 			paragraphData[paragraphs[i].length] = sortParts(semCats, paragraphData[paragraphs[i].length]);
 		}
 		if (hasProps(paragraphData)) {
-			resolve(paragraphData);
+			let resolvedParaData = {
+				paragraph: paragraphData
+			};
+			resolve(resolvedParaData);
 		}
 		else {
 			reject("Was not able to calculate paragraph data.");

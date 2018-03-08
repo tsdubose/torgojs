@@ -13,7 +13,10 @@ module.exports = function (chapters) {
 			chapterData[chapters.length] = 1;
 			chapterData.chLength = arrayCounter(chapters);
 			if (hasProps(chapterData.chLength)) {
-				resolve(chapterData);
+				let resolvedChapData = {
+					chapter: chapterData
+				};
+				resolve(resolvedChapData);
 			}
 			else {
 				reject("Could not calculate the chapter data.");
