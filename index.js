@@ -1,39 +1,26 @@
-const rita = require('rita');
-const fs = require('fs');
-const tracery = require('tracery-grammar');
-var cleanedNames = [];
-var charCounts = {};
-fs.readFile('pridesub.txt', 'utf-8', function (err, data) {
-	if (err) {
-		throw err;
-	}
+const charAndTheme = require('./charandthemes.js');
+const objectParse = require('./objectparser.js');
+const parseGram = require('./grammarparser.js');
+const fs = require('fs-extra');
 
-	var regex = /\b((?:[A-Z][a-z][-A-Za-z']*(?: *[A-Z][a-z][-A-Za-z']*)*)\b|\b(?:[A-Z][a-z][-A-Za-z']*))\b/g;
-	var names = data.match(regex);
-	names.forEach(function (value, index, array) {
-		var tag = rita.getPosTags(value);
-		if (tag[0] === 'nnp' || tag[0] === 'nnps') {
-			if (value === 'Mr' || value === 'Mrs' || value === 'Miss' || value === 'Lady') {
-				cleanedNames.push(value + " " + array[index + 1]);
-				array.splice(index + 1, 1);
-			}
-			else {
-				cleanedNames.push(value);
-				}
-			}
-			});
-			cleanedNames.forEach(function (val, ind, arr) {
-				if (charCounts[val]) {
-					charCounts[val]++;
-				}
-				else {
-					charCounts[val] = 1;
-				}
-			});
-			var myString = JSON.stringify(charCounts, null, 1);
-			fs.writeFile('tags.txt', myString, function (err) {
-				if (err) {
-					throw err;
-				}
-			});
-	});
+module.exports = {
+	//The parse function takes a single file and returns with its structure.
+	parse: function (pathToFile) {
+		if (typeof pathToFile !== "string") {
+			throw new Error(pathToFile + " is not a valid filename.");
+		}
+
+		return new Promise(function(resolve, reject) {
+			fs.readFile(pathToFile, 'utf-8')
+			.then(text => objectParse(text))
+			.then((textArray) => {
+				//The final item of the array that's returned contains the raw text. Shave it off before sending the chapters on.
+				let chapters = textArray.slice(0, textArray.length - 1);
+				return Promise.all([Promise.resolve(chapters), charAndTheme(textArray[textArray.length -1])]);
+			})
+			.then(charAndChap => parseGram(charAndChap[1], charAndChap[0]))
+			.then(parsedWork => resolve(parsedWork))
+			.catch(e => reject(e));
+		});
+	}
+};
