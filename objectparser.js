@@ -8,9 +8,8 @@ I'm not chopping into sentences here: since I'm dealing with the sentence-level 
 
 TODO: I need to accept eBook input. This seems like a logical place to sort that out, probably by slicing off the file extension and examining it.
 TODO: Need a better reason to reject. For example, need to test if it's getting text input.
-IDEA: I think i have to treat dialogue differently from the start.
 */
-
+const smarten = require('./smarten.js');
 module.exports = function (text) {
 	return new Promise(function(resolve, reject) {
 		//Be sure the text is using curly quotes and is otherwise clean.
@@ -23,7 +22,6 @@ module.exports = function (text) {
 			.map(function (chapter) {
 				return chapter.split(/\n\s*\n/);
 			});
-// TODO: Check this, I'm not sure it's working correctly.
 		let cleanedText = smartenedText.replace(/\\n/g, /\[ ]/);
 
 		chapters.push(cleanedText);
@@ -32,16 +30,5 @@ module.exports = function (text) {
 			reject("Could not sort the text into paragraphs and chapters.");
 		}
 		resolve(chapters);
-
 	});
 };
-//A nice function I found to insert curly quotes. Not worrying about it right now.
-function smarten(a) {
-	a = a.replace(/(^|[-\u2014\s(\["])'/g, "$1‘");       // opening singles
-	a = a.replace(/'/g, "’");                            // closing singles & apostrophes
-	a = a.replace(/(^|[-\u2014/\[(\u2018\s])"/g, "$1“"); // opening doubles
-	a = a.replace(/"/g, "”");                           // closing doubles
-	a = a.replace(/--/g, "—");                // em-dashes
-	a = a.replace(/_(?=\w)|(?=\w)_/g, "");                     //Underscores Gutengberg puts in.
-	return a;
-}
