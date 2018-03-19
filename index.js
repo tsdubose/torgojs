@@ -4,6 +4,12 @@ const parseGram = require('./grammarparser.js');
 const fs = require('fs-extra');
 const cleanCorpus = require('./cleancorpus.js');
 const createDict = require('./createdictionary.js');
+const workProbs = require('./objectprobabilities.js');
+const buildChap = require('./buildchap.js');
+const rita = require('rita');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+
 
 module.exports = {
 	//The parse function takes a single file and returns with its structure.
@@ -43,7 +49,31 @@ module.exports = {
 			})
 			.catch(e => {
 				reject(e);
-			})
+			});
+		});
+	},
+
+	write:  function (parsedWork, dictionary) {
+		//TODO: Despite returning a promise, right now this whole thing is synchronous. Need to see if that's going to be an issue.
+		parsedWork.dictionary = rita.RiGrammar(dictionary);
+		return new Promise(function(resolve, reject) {
+			let chapLength;
+			let book = "";
+			//First determine the number of chapters.
+			let bookLength = parseInt(workProbs(parsedWork.chapter), 10);
+			//FIXME: NaN is screwing things up
+			if (typeof bookLength !== "number") {
+				reject("Number of chapters could not be calculated.");
+			}
+			//Build that number of chapters in a loop.
+			for (let i = 0; i < bookLength; i++) {
+				chapLength = parseInt(workProbs(parsedWork.chapter.chLength), 10);
+				if (typeof chapLength !== "number") {
+					reject("Length of chapter" + i + 1 + "could not be calculated.");
+				}
+				book += buildChap(parsedWork, chapLength);
+			}
+			resolve(book);
 		});
 	}
 };
