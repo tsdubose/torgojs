@@ -38,39 +38,47 @@ module.exports = function(semBlocks, charAndTheme) {
 			}
 			//Run through the semantic block and categorize each sentence.
 			for (let n = 0; n < thisBlock.length; n++) {
-				var cleanItem = thisBlock[n].replace(/[“”]/g, "");
-				//Take each sentence, tokenize it, then test to see if it includes any characters or themes.
-				let tokens = rita.tokenize(cleanItem);
-				let posTags = rita.getPosTags(cleanItem);
-				//Check to see if the tokens include any of the characters or themes. If so, append them to the POS tags array.
-				if (arrayIncludes(tokens, flatThemes)) {
-					tokens.forEach(function(word, index) {
-						for (let i = 0; i < themeKeys.length; i++) {
-							if (charAndTheme[themeKeys[i]].includes(word)) {
-								posTags[index] += "--" + themeKeys[i];
-								break;
+				try {
+					let cleanItem = thisBlock[n].replace(/[“”]/g, "");
+					//Take each sentence, tokenize it, then test to see if it includes any characters or themes.
+					let tokens = rita.tokenize(cleanItem);
+					let posTags = rita.getPosTags(cleanItem);
+					//Check to see if the tokens include any of the characters or themes. If so, append them to the POS tags array.
+					// TODO: There are serious readability issues here.
+					if (arrayIncludes(tokens, flatThemes)) {
+						tokens.forEach(function(word, index) {
+							for (let i = 0; i < themeKeys.length; i++) {
+								if (charAndTheme[themeKeys[i]].includes(word)) {
+									posTags[index] += "--" + themeKeys[i];
+									break;
+								}
+							}
+						});
+					}
+					//The temporary solution to the Mr. problem: check against a hard-wired list of possibilities stolen from RiTa,
+					//and then replace the posTags with that exact title, also grabbing any periods that come next.
+					for (let t = 0; t < tokens.length; t++) {
+						if (titles.includes(tokens[t])) {
+							posTags[t] = tokens[t];
+							if (posTags[t + 1] == ".") {
+								posTags[t] += ".";
+								posTags.splice(t + 1, 1);
 							}
 						}
-					});
-				}
-				//The temporary solution to the Mr. problem: check against a hard-wired list of possibilities stolen from RiTa,
-				//and then replace the posTags with that exact title, also grabbing any periods that come next.
-				for (let t = 0; t < tokens.length; t++) {
-					if (titles.includes(tokens[t])) {
-						posTags[t] = tokens[t];
-						if (posTags[t + 1] == ".") {
-							posTags[t] += ".";
-							posTags.splice(t + 1, 1);
-						}
 					}
+					//Sort the sentences into probabilities. Check to see if that sentence type has a sentence of that length and then call the function that sorts probabilities.
+					var sentenceLengths = Object.keys(sentenceData[sentType]);
+					if (!sentenceLengths.includes(posTags.length.toString())) {
+						sentenceData[sentType][posTags.length] = {};
+						sentenceData[sentType][posTags.length].starts = {};
+						sentenceData[sentType][posTags.length].total = 0;
+					}
+					sentenceData[sentType][posTags.length].total += 1;
+					sentenceData[sentType][posTags.length] = sortParts(posTags, sentenceData[sentType][posTags.length]);
+				} catch (e) {
+					console.log("RiTa could not process a word.");
 				}
-				//Sort the sentences into probabilities. Check to see if that sentence type has a sentence of that length and then call the function that sorts probabilities.
-				var sentenceLengths = Object.keys(sentenceData[sentType]);
-				if (!sentenceLengths.includes(posTags.length.toString())) {
-					sentenceData[sentType][posTags.length] = {};
-					sentenceData[sentType][posTags.length].starts = {};
-				}
-				sentenceData[sentType][posTags.length] = sortParts(posTags, sentenceData[sentType][posTags.length]);
+
 			}
 		}
 		for (var key in sentenceData) {
