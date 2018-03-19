@@ -22,7 +22,7 @@ module.exports = function (text) {
 			.map(function (chapter) {
 				return chapter.split(/\n\s*\n/);
 			});
-		let cleanedText = smartenedText.replace(/\\n/g, /\[ ]/);
+		let cleanedText = smartenedText.replace(/\r?\n|\r/g, " ");
 
 		chapters.push(cleanedText);
 

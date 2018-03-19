@@ -5,9 +5,6 @@ Note that the object it accepts is not the entire object from the
 sentence parser module: it is only the data for that item length.
 
 Then, it cycles through the items and adds a structure to that length.
-
-TODO: Punctuation is just going to fuck this thing right up, I think. Maybe I need
-to think a bit more in terms of sentence types and then add punctuation that way.
 */
 module.exports = function(p, o) {
 	for (let i = 0; i < p.length; i++) {

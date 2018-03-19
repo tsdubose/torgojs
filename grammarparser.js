@@ -15,7 +15,6 @@ const flatten = require('./flatten.js');
 const parsePara = require('./paragraphparser.js');
 const parseSemBlock = require('./semblockparser.js');
 const parseSent = require('./sentenceparser.js');
-// TODO: Obvious overlap here between these two, and I need to figure out how to account for both.
 // TODO: Move these to environment variables.
 const ABBREVIATIONS = ["Adm.", "Capt.", "Cmdr.", "Col.", "Dr.", "Gen.", "Gov.", "Lt.", "Maj.", "Messrs.", "Mr.", "Mrs.", "Ms.", "Prof.", "Rep.", "Reps.", "Rev.", "Sen.", "Sens.", "Sgt.", "Sr.", "St.", "a.k.a.", "c.f.", "i.e.", "e.g.", "vs.", "v.", "Jan.", "Feb.", "Mar.", "Apr.", "Mar.", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
 const dialogueTester = /(“[^”]*”)/g;
