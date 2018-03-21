@@ -2,7 +2,7 @@
 const workProbs = require('./objectprobabilities.js');
 const buildSemBlock = require('./buildsemblock.js');
 
-module.exports = function (parsedWork, paraLength) {
+module.exports = async function (parsedWork, paraLength) {
 	let para = "";
 	let semBlockType;
 	let followingBlockType;
@@ -10,16 +10,16 @@ module.exports = function (parsedWork, paraLength) {
 	for (let i = 0; i < paraLength; i++) {
 		//If we're on the first iteration of the loop, set the initial values.
 		if (i == 0) {
-			semBlockType = workProbs(parsedWork.paragraph[paraLength].starts);
-			followingBlockType = workProbs(parsedWork.paragraph[paraLength].starts[semBlockType].following);
+			semBlockType = await workProbs(parsedWork.paragraph[paraLength].starts);
+			followingBlockType = await workProbs(parsedWork.paragraph[paraLength].starts[semBlockType].following);
 		}
 
 		else {
 			semBlockType = followingBlockType;
-			followingBlockType = workProbs(parsedWork.paragraph[paraLength][semBlockType].following);
+			followingBlockType = await workProbs(parsedWork.paragraph[paraLength][semBlockType].following);
 		}
-		semBlockLength = workProbs(parsedWork.semBlock);
-		para +=  buildSemBlock(parsedWork, semBlockLength, semBlockType);
+		semBlockLength = await workProbs(parsedWork.semBlock);
+		para +=  await buildSemBlock(parsedWork, semBlockLength, semBlockType);
 	}
 	return para + "\r\n";
 };

@@ -4,15 +4,15 @@
 const workProbs = require('./objectprobabilities.js');
 const buildPara = require('./buildpara.js');
 
-module.exports = function (parsedWork, chapLength) {
+module.exports = async function (parsedWork, chapLength) {
 	let chapter = "";
 	let paraLength;
 	for (let i = 0; i < chapLength; i++) {
-		paraLength = parseInt(workProbs(parsedWork.paragraph), 10);
+		paraLength = parseInt(await workProbs(parsedWork.paragraph), 10);
 		if (typeof paraLength !== "number") {
 			throw new Error("Error calculating paragraph length.");
 		}
-		chapter +=  buildPara(parsedWork, paraLength);
+		chapter += await buildPara(parsedWork, paraLength);
 	}
 	return chapter;
 };

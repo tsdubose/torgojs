@@ -1,22 +1,22 @@
 const rita = require('rita');
 const workProb = require('./objectprobabilities.js');
 
-module.exports = function(parsedWork, sentLength, semBlockType) {
+module.exports = async function(parsedWork, sentLength, semBlockType) {
 	let posTagSent = "";
 	let gramObj = parsedWork.sentence[semBlockType][sentLength];
 	let posTag, followingPosTag;
 
 	for (let i = 0; i < sentLength; i++) {
 		if (i == 0) {
-			posTag = workProb(gramObj.starts);
-			followingPosTag = workProb(gramObj.starts[posTag].following);
+			posTag = await workProb(gramObj.starts);
+			followingPosTag = await workProb(gramObj.starts[posTag].following);
 		}
 
 		else {
 			//If there is a following posTag, use it. Otherwise, just recalculate based on the structure of the sentence.
-			posTag = followingPosTag ? followingPosTag : workProb(gramObj);
+			posTag = followingPosTag ? followingPosTag : await workProb(gramObj);
 			if (gramObj[posTag].following) {
-				followingPosTag = workProb(gramObj[posTag].following);
+				followingPosTag = await workProb(gramObj[posTag].following);
 			}
 
 		}
