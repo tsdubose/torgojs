@@ -7,8 +7,6 @@ const createDict = require('./createdictionary.js');
 const workProbs = require('./objectprobabilities.js');
 const buildChap = require('./buildchap.js');
 const rita = require('rita');
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
 
 
 module.exports = {
@@ -55,7 +53,7 @@ module.exports = {
 
 	write: async function(parsedWork, dictionary) {
 		//TODO: Despite returning a promise, right now this whole thing is synchronous. Need to see if that's going to be an issue.
-		parsedWork.dictionary = rita.RiGrammar(dictionary);
+		parsedWork.dictionary = dictionary;
 		let chapLength;
 		let book = "";
 		//First determine the number of chapters.

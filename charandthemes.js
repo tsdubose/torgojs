@@ -5,18 +5,13 @@ const myNet = new wordnet();
 /*Given a string, this module returns an object of the three primary characters of a work (defined by numbers of mentions) and the primary themes—a net of nouns that are commonly mentioned and related to one another via a wordnet lookup.
 The returned object takes the following form:
 {
-char1: first char,
-char2: second char,
-char3: third char,
+char1: [first char],
+char2: [second char],
+char3: [third char],
 theme1: [array of themes],
 theme2: [array of themes],
 theme3: [array of themes]
 }
-["char1", "char2", "char3"],
-[any number of strings as found by wordnet],
-[any number of strings as found by wordnet],
-[any number of strings as found by wordnet]
-
 
 This whole thing returns a Promise.
 */
@@ -72,7 +67,7 @@ function themeFinder(sortedArray) {
 				let wordObjects = lookupResults.map(function (el) {
 					if (el) {
 						for (let i = el.length - 1; i > 0; i--) {
-							if (el[i].pos == "n") {
+							if (el[i]) {
 								return el[i];
 							}
 						}
@@ -85,7 +80,7 @@ function themeFinder(sortedArray) {
 				return Promise.all(wordObjects.map(function (el) {
 					themes.push(el.synonyms);
 					return Promise.all(el.ptrs.map(function (pointer) {
-						if (pointer.pos == "n" && pointer.pointerSymbol == "@") {
+						if (pointer.pointerSymbol == "@" || pointer.pointerSymbol == "~") {
 							return myNet.getAsync(pointer.synsetOffset, pointer.pos);
 						}
 						else {
@@ -126,8 +121,8 @@ module.exports = function (corpus) {
 
 
 	//Turn the concordance into an array of word/incidence number paired objects and sort them.
-	var concordArray = [];
-	for (var key in concord) {
+	let concordArray = [];
+	for (let key in concord) {
 		if (concord.hasOwnProperty(key)) {
 			concordArray.push({[key]: concord[key]});
 		}
@@ -139,13 +134,10 @@ module.exports = function (corpus) {
 		return  b[keyNameB] - a[keyNameA];
 	});
 
-	//Take the sorted concordance and pass it to each of the functions created above. Then Promise.all will wait for a response.
+	//Take the sorted concordance and pass it to each of the functions created above. Promise.all will wait for a response.
 	return new Promise(function(resolve, reject) {
-		let themeAndChar = [characterFinder(concordArray), themeFinder(concordArray)];
-		Promise.all(themeAndChar)
+		Promise.all([characterFinder(concordArray), themeFinder(concordArray)])
 			.then((resolvedThemeAndChar) => {
-				// Switching this from an array to an object. There's more work to be done here to make this less hard-wired.
-				//Wrapping the chars in arrays right now, but that's going to be more systematic later.
 				let themeAndCharToReturn = {};
 				themeAndCharToReturn.char1 = [resolvedThemeAndChar[0][0]];
 				themeAndCharToReturn.char2 = [resolvedThemeAndChar[0][1]];
@@ -153,6 +145,7 @@ module.exports = function (corpus) {
 				themeAndCharToReturn.theme1 = resolvedThemeAndChar[1][0];
 				themeAndCharToReturn.theme2 = resolvedThemeAndChar[1][1];
 				themeAndCharToReturn.theme3 = resolvedThemeAndChar[1][2];
+				console.log(themeAndCharToReturn);
 				resolve(themeAndCharToReturn);
 			}
 			)

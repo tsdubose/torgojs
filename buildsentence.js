@@ -1,4 +1,3 @@
-const rita = require('rita');
 const workProb = require('./objectprobabilities.js');
 
 module.exports = async function(parsedWork, sentLength, semBlockType) {
@@ -20,10 +19,9 @@ module.exports = async function(parsedWork, sentLength, semBlockType) {
 			}
 
 		}
-		// posTagSent.push("<" + posTag + ">");
 		posTagSent += "<" + posTag + "> ";
 	}
-	parsedWork.dictionary.addRule("<start>", posTagSent);
+
 	// TODO: Need to capitalize sentences, add quotation marks etc.
-	return "sentence length is " + sentLength + " " + parsedWork.dictionary.expand() + " ";
+	return posTagSent;
 };
